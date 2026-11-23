@@ -1,0 +1,19 @@
+:host { position: fixed; z-index: 20; inset: 0; pointer-events: none; }
+.modal-backdrop { display: grid; place-items: center; width: 100%; height: 100%; padding: 20px; box-sizing: border-box; background: #07090dba; backdrop-filter: blur(8px); pointer-events: auto; animation: backdrop-in .2s ease-out; }
+.winner-dialog { position: relative; width: min(100%, 410px); overflow: hidden; box-sizing: border-box; padding: 34px 30px 28px; border: 1px solid #554b39; border-radius: 20px; background: radial-gradient(ellipse at 50% 0%, #3b3020, #171a20 60%); box-shadow: 0 30px 90px #000b, 0 0 50px #e3b2501a; text-align: center; animation: dialog-in .32s cubic-bezier(.16,.85,.25,1.3); }
+.winner-icon { display: grid; place-items: center; width: 64px; height: 64px; margin: 0 auto 17px; border: 1px solid #c8a75c; border-radius: 21px; color: #ffe4a0; background: radial-gradient(circle, #80602e, #392b19); box-shadow: 0 0 30px #efc25738; font-size: 32px; }
+.winner-eyebrow { color: #c4a968; font-size: 9px; font-weight: 900; letter-spacing: 2px; }
+h2 { margin: 10px 0 11px; color: #f3f2eb; font-size: 21px; letter-spacing: -.5px; }
+.winner-name { overflow-wrap: anywhere; margin: 0; color: #ffdc8c; font-size: 31px; font-weight: 850; letter-spacing: -.8px; text-shadow: 0 3px 20px #ffc55a40; }
+.auto-note { margin: 14px 0 23px; color: #929da9; font-size: 11px; }
+.winner-actions { display: flex; flex-direction: column; gap: 9px; }
+.winner-actions button { min-height: 43px; border-radius: 10px; cursor: pointer; font: inherit; font-size: 11px; font-weight: 750; }
+.keep-button { border: 1px solid #3b454f; color: #dce5eb; background: #242a32; }
+.keep-button:hover { background: #303943; }
+.exclude-button { border: 1px solid #4f907d; color: #12221e; background: #73d8bd; }
+.exclude-button:hover { background: #91ecd3; }
+.confetti { position: absolute; width: 65px; height: 5px; opacity: .8; transform: rotate(-42deg); }
+.confetti-one { top: 38px; left: -20px; background: #dfb958; }
+.confetti-two { top: 47px; right: -23px; background: #69c5aa; transform: rotate(42deg); }
+@keyframes backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes dialog-in { from { opacity: 0; transform: translateY(14px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }

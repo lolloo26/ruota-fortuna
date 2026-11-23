@@ -1,0 +1,103 @@
+<div class="app-shell">
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Ruota della Fortuna - Home">
+      <span class="brand-mark">✦</span>
+      <span class="brand-name">FORTUNA<span>.</span></span>
+    </a>
+    <div class="topbar-center">
+      <span class="topbar-label">MODALITÀ DI GIOCO</span>
+      <div class="mode-switch" role="tablist" aria-label="Modalità di estrazione">
+        <button type="button" role="tab" [attr.aria-selected]="state.mode() === 'classic'"
+          [class.selected]="state.mode() === 'classic'" [disabled]="state.isSpinning()"
+          (click)="state.setMode('classic')"><span>◉</span> Ruota 3D Moderna</button>
+        <button type="button" role="tab" [attr.aria-selected]="state.mode() === 'csgo'"
+          [class.selected]="state.mode() === 'csgo'" [disabled]="state.isSpinning()"
+          (click)="state.setMode('csgo')"><span>▤</span> CS:GO Case Opening</button>
+        <button type="button" role="tab" [attr.aria-selected]="state.mode() === 'pokemon'"
+          [class.selected]="state.mode() === 'pokemon'" [disabled]="state.isSpinning()"
+          (click)="state.setMode('pokemon')"><span>✦</span> Pacchetto Pokémon</button>
+        <button type="button" role="tab" [attr.aria-selected]="state.mode() === 'claw'"
+          [class.selected]="state.mode() === 'claw'" [disabled]="state.isSpinning()"
+          (click)="state.setMode('claw')"><span>⌘</span> Claw Machine</button>
+      </div>
+    </div>
+    <div class="topbar-status"><i></i> PRONTO A GIOCARE</div>
+  </header>
+
+  <main class="workspace">
+    <app-controls-panel class="controls"></app-controls-panel>
+    <section class="play-area">
+      <div class="play-heading">
+        <div>
+          <div class="eyebrow"><span class="spark">✦</span> LA FORTUNA SCEGLIE</div>
+          <h1>{{ state.mode() === 'classic' ? 'Chi sarà il prossimo?' : state.mode() === 'csgo' ? 'Apri il tuo case.' : state.mode() === 'pokemon' ? 'Una carta, una sorpresa.' : 'Pesca il tuo premio.' }}</h1>
+          <p>{{ state.mode() === 'classic' ? 'Un giro, una sorpresa. Lascia decidere alla ruota.' : state.mode() === 'csgo' ? 'Un drop leggendario ti aspetta. Gira il nastro!' : state.mode() === 'pokemon' ? 'Apri il booster e scopri la carta finale.' : 'La gru sceglie una capsula fortunata.' }}</p>
+        </div>
+        <div class="mode-chip"><span></span>{{ state.mode() === 'classic' ? 'RUOTA CLASSICA' : state.mode() === 'csgo' ? 'RARE DROP' : state.mode() === 'pokemon' ? 'BOOSTER PACK' : 'ARCADE CLAW' }}</div>
+      </div>
+
+      <div class="stage">
+        @if (state.mode() === 'classic') {
+          <app-classic-wheel [entries]="state.activeEntries()" (finished)="onSpinFinished($event)"></app-classic-wheel>
+        } @else if (state.mode() === 'csgo') {
+          <app-csgo-wheel [entries]="state.activeEntries()" (finished)="onSpinFinished($event)"></app-csgo-wheel>
+        } @else if (state.mode() === 'pokemon') {
+          <app-pokemon-pack [entries]="state.activeEntries()" [requestedWinner]="requestedPokemonWinner()"
+            (openRequested)="openPokemonPack()"
+            (finished)="onSpinFinished($event)"></app-pokemon-pack>
+        } @else {
+          <app-claw-machine [entries]="state.activeEntries()" [requestedWinner]="requestedClawWinner()"
+            (openRequested)="openClawMachine()" (finished)="onSpinFinished($event)"></app-claw-machine>
+        }
+      </div>
+
+      <div class="spin-controls">
+        @if (state.mode() !== 'pokemon' && state.mode() !== 'claw') {
+          <div class="strength-control">
+            <div class="strength-label"><span>FORZA DEL LANCIO</span><strong>{{ state.strength() }}<small>%</small></strong></div>
+            <input type="range" min="10" max="100" step="1" [value]="state.strength()"
+              [disabled]="state.isSpinning() || charging()" (input)="setStrength($event)"
+              aria-label="Forza del lancio" />
+            <div class="strength-scale"><span>DELICATO</span><span>POTENTE</span></div>
+          </div>
+          <button class="spin-button" type="button" [disabled]="state.isSpinning() || state.activeCount() === 0"
+            [class.charging]="charging()" [style.--charge]="chargeProgress() * 100 + '%'"
+            (pointerdown)="startCharging($event)" (pointerup)="releaseCharge($event)"
+            (pointercancel)="releaseCharge($event)" (pointerleave)="releaseCharge($event)"
+            (keydown)="onChargeKeyDown($event)" (keyup)="onChargeKeyUp($event)"
+            (contextmenu)="$event.preventDefault()">
+            <span class="spin-icon">{{ state.isSpinning() ? '◌' : '↻' }}</span>
+            <span>{{ state.isSpinning() ? 'GIRA IN CORSO' : charging() ? 'CARICA... ' + chargeStrength + '%' : 'TIENI PREMUTO PER GIRARE' }}</span>
+          </button>
+        } @else if (state.mode() === 'pokemon') {
+          <button class="spin-button pack-open-button" type="button"
+            [disabled]="state.isSpinning() || state.activeCount() === 0"
+            (click)="openPokemonPack()">
+            <span class="spin-icon">{{ state.isSpinning() ? '◌' : '✦' }}</span>
+            <span>{{ state.isSpinning() ? 'APERTURA IN CORSO' : 'APRI PACCHETTO' }}</span>
+          </button>
+        } @else {
+          <button class="spin-button claw-open-button" type="button"
+            [disabled]="state.isSpinning() || state.activeCount() === 0"
+            (click)="openClawMachine()">
+            <span class="spin-icon">{{ state.isSpinning() ? '◌' : '⌘' }}</span>
+            <span>{{ state.isSpinning() ? 'GRU IN MOVIMENTO' : 'PESCA CAPSULA' }}</span>
+          </button>
+        }
+      </div>
+
+      <div class="stage-footnote">
+        <span><i class="secure-icon">◈</i> {{ state.activeCount() }} voci in gioco</span>
+        <span class="footnote-divider"></span>
+        <span>La fortuna è nelle tue mani</span>
+      </div>
+    </section>
+  </main>
+
+  @if (state.toast()) {
+    <div class="toast" role="status"><span>✓</span>{{ state.toast() }}</div>
+  }
+
+  <app-winner-modal [winner]="state.winner()" [autoExcluded]="state.autoExclude()"
+    (keep)="state.keepWinner()" (exclude)="state.excludeWinner()"></app-winner-modal>
+</div>

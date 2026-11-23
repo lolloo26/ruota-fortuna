@@ -1,0 +1,68 @@
+<section class="arcade" [class]=" 'arcade phase-' + phase()"
+  [style.--claw-x]="clawX() + '%'">
+  <header class="marquee">
+    <span class="marquee-bulbs"></span>
+    <span class="marquee-title">CLAW <b>EXTRACTOR</b></span>
+    <span class="marquee-subtitle">LUCKY DROP • PRIZE INSIDE</span>
+  </header>
+
+  <div class="machine-frame">
+    <div class="machine-window" role="button"
+      [attr.tabindex]="phase() === 'idle' || phase() === 'reveal' ? 0 : -1"
+      [attr.aria-disabled]="phase() !== 'idle' && phase() !== 'reveal'"
+      (click)="requestExtraction()"
+      (keydown.enter)="requestExtraction()"
+      (keydown.space)="$event.preventDefault(); requestExtraction()"
+      aria-label="Pesca una capsula dalla macchinetta">
+      <div class="glass-glare"></div>
+      <div class="rail"><span></span></div>
+      <div class="trolley" aria-hidden="true">
+        <div class="trolley-body"><i></i><i></i></div>
+        <div class="cable"></div>
+        <div class="claw">
+          <span class="claw-jaw left-jaw"></span>
+          <span class="claw-jaw right-jaw"></span>
+          <span class="claw-tip"></span>
+        </div>
+        @if (phase() === 'lifting' || phase() === 'returning' || phase() === 'releasing') {
+          <span class="carried-capsule" [class.capsule-dropping]="phase() === 'releasing'">
+            <i></i>
+          </span>
+        }
+      </div>
+
+      <div class="capsule-bed">
+        @for (capsule of capsules(); track capsule.id) {
+          <span class="capsule" [class.target-capsule]="capsule.target"
+            [class.capsule-caught]="capsule.target && (phase() === 'grabbing' || phase() === 'lifting' || phase() === 'returning' || phase() === 'releasing')"
+            [style.left]="capsule.left + '%'" [style.bottom]="capsule.bottom + 'px'"
+            [style.--capsule-color]="capsule.color"><i>?</i></span>
+        }
+      </div>
+      <div class="machine-reflection"></div>
+    </div>
+
+    <aside class="prize-chute">
+      <span class="chute-label">PRIZE</span>
+      <div class="chute-mouth"></div>
+      @if (phase() === 'releasing' || phase() === 'reveal') {
+        <span class="chute-capsule"><i></i></span>
+      }
+    </aside>
+    <div class="machine-base">
+      <div class="speaker"><i></i><i></i><i></i><i></i><i></i></div>
+      <span class="coin-slot"></span>
+      <span class="status-light" [class.on]="motorRunning()"></span>
+    </div>
+    <div class="neon-foot"></div>
+  </div>
+
+  @if (phase() === 'reveal') {
+    <div class="prize-reveal" role="status">
+      <span class="reveal-burst">✦</span>
+      <span class="reveal-caption">CAPSULA APERTA</span>
+      <strong>{{ prizeLabel() }}</strong>
+      <span class="reveal-subtitle">PREMIO ESTRATTO</span>
+    </div>
+  }
+</section>

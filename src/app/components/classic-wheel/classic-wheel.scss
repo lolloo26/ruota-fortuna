@@ -1,0 +1,13 @@
+:host { display: block; width: min(100%, 520px); margin: 0 auto; }
+.wheel-scene { position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: 1; perspective: 1100px; }
+.wheel-bezel { position: relative; width: 91%; aspect-ratio: 1; border-radius: 50%; padding: 10px; background: linear-gradient(140deg, #fff76a 0%, #ff8a00 12%, #401aff 23%, #ff00c8 39%, #0bdcff 57%, #51ff00 78%, #fff76a 100%); box-shadow: 0 25px 35px #0009, 0 0 32px #ff00d455, inset 0 2px 3px #fff9, inset 0 -7px 12px #080a0d; transform: rotateX(7deg); }
+.wheel-glass { position: relative; width: 100%; height: 100%; overflow: hidden; border: 2px solid #fff36b; border-radius: 50%; background: radial-gradient(circle at 50% 43%, #252d35, #0b1016 72%); box-shadow: inset 0 0 30px #000, inset 0 4px 10px #fff2, 0 0 20px #00eaff77; }
+canvas { display: block; width: 100%; height: 100%; }
+.glass-shine { position: absolute; inset: 3%; border-radius: 50%; pointer-events: none; background: linear-gradient(143deg, #fff4 0%, transparent 20%, transparent 75%, #d7efff09 100%); box-shadow: inset 0 2px 15px #fff2; }
+.pin { position: absolute; z-index: 3; top: 0; left: 50%; display: grid; place-items: start center; width: 40px; height: 58px; transform: translateX(-50%); filter: drop-shadow(0 5px 4px #0009); transform-origin: 50% 5%; }
+.pin.bounce { animation: pin-bounce .2s ease-out; }
+.pin::before { width: 22px; height: 22px; border: 3px solid #fff; border-radius: 50%; background: linear-gradient(135deg, #fff600, #ff3bd4); box-shadow: 0 0 15px #fff600, inset 0 2px 3px #fff; content: ''; }
+.pin-tip { width: 0; height: 0; margin-top: -1px; border-top: 30px solid #ffeb00; border-right: 13px solid transparent; border-left: 13px solid transparent; filter: drop-shadow(0 0 8px #ffeb00); }
+.table-shadow { position: absolute; z-index: -1; bottom: 1%; width: 86%; height: 8%; border-radius: 50%; background: #000a; filter: blur(17px); }
+@keyframes pin-bounce { 0% { rotate: 0; } 45% { rotate: -16deg; } 100% { rotate: 0; } }
+@media (max-width: 700px) { :host { width: min(90vw, 430px); } .wheel-bezel { padding: 7px; } }

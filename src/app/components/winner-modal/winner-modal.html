@@ -1,0 +1,21 @@
+@if (winner; as result) {
+  <div class="modal-backdrop" role="presentation">
+    <section class="winner-dialog" role="dialog" aria-modal="true" aria-labelledby="winner-title">
+      <div class="confetti confetti-one"></div>
+      <div class="confetti confetti-two"></div>
+      <div class="winner-icon">★</div>
+      <span class="winner-eyebrow">ESTRAZIONE COMPLETATA</span>
+      <h2 id="winner-title">Abbiamo un vincitore!</h2>
+      <p class="winner-name">{{ result.label }}</p>
+      @if (autoExcluded) {
+        <p class="auto-note">Il vincitore è già escluso dalla prossima estrazione.</p>
+      } @else {
+        <p class="auto-note">Cosa vuoi fare con questa voce?</p>
+      }
+      <div class="winner-actions">
+        <button class="keep-button" type="button" (click)="keep.emit()">Mantieni</button>
+        <button class="exclude-button" type="button" (click)="exclude.emit()">Escludi dalle prossime estrazioni</button>
+      </div>
+    </section>
+  </div>
+}

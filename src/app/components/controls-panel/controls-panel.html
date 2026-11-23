@@ -1,0 +1,77 @@
+<aside class="sidebar">
+  <section class="section-heading">
+    <div>
+      <span class="eyebrow">LA TUA LISTA</span>
+      <h2>Partecipanti <span class="count">{{ state.activeCount() }}</span></h2>
+    </div>
+    <button class="icon-button sound-toggle" type="button" (click)="sound.toggleMute()"
+      [attr.aria-label]="sound.muted() ? 'Attiva audio' : 'Disattiva audio'">
+      {{ sound.muted() ? '◌' : '♫' }}
+    </button>
+  </section>
+
+  <form class="quick-add" (ngSubmit)="addQuickEntry()">
+    <input name="quickEntry" [ngModel]="quickEntry()" (ngModelChange)="quickEntry.set($event)"
+      [disabled]="state.isSpinning()"
+      placeholder="Aggiungi un nome..." aria-label="Nuovo partecipante" />
+    <button class="add-button" type="submit" [disabled]="!quickEntry().trim() || state.isSpinning()" aria-label="Aggiungi voce">+</button>
+  </form>
+
+  <details class="bulk-entry">
+    <summary>Incolla una lista di nomi</summary>
+    <textarea [ngModel]="pastedEntries()" (ngModelChange)="pastedEntries.set($event)"
+      [disabled]="state.isSpinning()"
+      [ngModelOptions]="{standalone: true}" rows="4" placeholder="Un nome per riga"></textarea>
+    <button class="text-button" type="button" (click)="addPastedEntries()" [disabled]="!pastedEntries().trim() || state.isSpinning()">
+      Aggiungi alla lista
+    </button>
+  </details>
+
+  <div class="list-tools">
+    <span>{{ state.entries().length }} voci totali</span>
+    <button class="text-button restore" type="button" (click)="state.restoreEntries()"
+      [disabled]="state.activeCount() === state.entries().length || state.isSpinning()">Ripristina escluse</button>
+  </div>
+
+  <div class="entry-list" aria-label="Voci della ruota">
+    @for (entry of state.entries(); track entry.id) {
+      <div class="entry-row" [class.excluded]="entry.excluded">
+        <button class="status-dot" type="button" (click)="state.toggleExcluded(entry.id)"
+          [disabled]="state.isSpinning()"
+          [attr.aria-label]="entry.excluded ? 'Riabilita ' + entry.label : 'Escludi ' + entry.label">
+          <span></span>
+        </button>
+        @if (editingId() === entry.id) {
+          <input class="edit-input" [ngModel]="editDraft()" (ngModelChange)="editDraft.set($event)"
+            [ngModelOptions]="{standalone: true}" (keydown.enter)="saveEdit(entry)"
+            (keydown.escape)="editingId.set(null)" [disabled]="state.isSpinning()" aria-label="Modifica nome" />
+          <button class="row-action save" type="button" (click)="saveEdit(entry)" [disabled]="state.isSpinning()" aria-label="Salva">✓</button>
+        } @else {
+          <span class="entry-name" [title]="entry.label">{{ entry.label }}</span>
+          <button class="row-action" type="button" (click)="beginEdit(entry)" [disabled]="state.isSpinning()" aria-label="Modifica nome">✎</button>
+        }
+        <button class="row-action delete" type="button" (click)="state.removeEntry(entry.id)"
+          [disabled]="state.isSpinning()"
+          [attr.aria-label]="'Elimina ' + entry.label">×</button>
+      </div>
+    } @empty {
+      <div class="empty-list">La lista è vuota. Aggiungi il primo nome!</div>
+    }
+  </div>
+
+  <div class="sidebar-bottom">
+    <label class="auto-exclude">
+      <span class="toggle-copy">
+        <strong>Esclusione automatica</strong>
+        <small>Rimuovi il vincitore dal prossimo giro</small>
+      </span>
+      <input type="checkbox" [checked]="state.autoExclude()"
+        [disabled]="state.isSpinning()"
+        (change)="state.setAutoExclude($any($event.target).checked)" />
+      <span class="switch"></span>
+    </label>
+    <button class="share-button" type="button" (click)="copyShareLink()" [disabled]="state.isSpinning()">
+      <span>↗</span> Copia link ruota
+    </button>
+  </div>
+</aside>

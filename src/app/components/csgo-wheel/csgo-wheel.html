@@ -1,0 +1,35 @@
+<div class="case-shell">
+  <div class="case-topline">
+    <span>★ RARE SPECIAL ITEM</span>
+    <span class="case-live"><i></i> LIVE DROP</span>
+  </div>
+  <div class="reel-viewport" #reelViewport>
+    <div class="reel-track">
+      @for (card of cards; track card.id; let index = $index) {
+        <article class="drop-card" [class]="card.rarity" [class.winner]="card.isWinner"
+          [class.revealed]="card.isWinner && revealed">
+          <div class="card-art">
+            @if (card.isWinner) {
+              @if (revealed) {
+                <span class="gold-star">★</span>
+                <span class="revealed-label">{{ cards.length ? winnerLabel : '' }}</span>
+              } @else {
+                <span class="lock-icon">♙</span>
+                <span class="unknown-label">★ ??? ★</span>
+              }
+            } @else {
+              <span class="item-symbol">{{ index % 3 === 0 ? '✦' : index % 3 === 1 ? '⌁' : '◈' }}</span>
+              <span class="card-name">{{ card.label }}</span>
+            }
+          </div>
+          <div class="rarity-bar"></div>
+          @if (card.isWinner) { <span class="winner-stamp">★ RARE SPECIAL ITEM</span> }
+        </article>
+      }
+    </div>
+    <div class="selection-marker"><span></span></div>
+    <div class="fade-edge left"></div>
+    <div class="fade-edge right"></div>
+  </div>
+  <div class="case-footer"><span>CONGRATULATIONS</span><span class="gold-label">{{ revealed ? winnerLabel : 'THE DROP IS WAITING...' }}</span></div>
+</div>
